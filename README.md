@@ -101,5 +101,9 @@ async fn main() -> anyhow::Result<()> {
 
 Dual-licensed under **MIT** or **Apache-2.0**.
 See [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) for details.
-```
+
+## Contribute
+
+Simply create an issue here or pr https://github.com/kjuulh/noworkers.git, development happens publicly at: git.front.kjuulh.io/kjuulh/noworkers.
+
 
