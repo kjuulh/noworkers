@@ -5,6 +5,12 @@ Manage concurrent tasks with optional limits, cancellation, and first-error prop
 
 Inpired by golang (errgroups)
 
+## Disclaimer
+
+The library is still new, and as such the API is subject to change, I don't expect changes to the add and wait functions, but the rest may change. I might also move to custom error types, and or removing the tokio_utils entirely to slim down the package. It shouldn't affect the user too much however.
+
+The crate is in production, and has seen extensive use
+
 ## Features
 
 - **Unlimited or bounded concurrency** via `with_limit(usize)`.  
