@@ -25,33 +25,39 @@ Then in your code:
 
 ```rust
 use noworkers::Workers;
-use tokio_util::sync::CancellationToken;
 ```
 
 ## Quick Example
 
-```rust,no_run
+```rust
 use noworkers::Workers;
-use tokio_util::sync::CancellationToken;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Create a worker group with up to 5 concurrent tasks
     let mut workers = Workers::new();
 
-    workers
-        .with_limit(5)
-        .with_cancel(&CancellationToken::new());
+    // Limit amount of concurrent workers
+    workers.with_limit(5);
+
+    // Adds cancellation signal
+    workers.with_cancel_task(async move {
+      // send cancellation to tasks after 60 seconds
+      tokio::time::sleep(std::time::Duration::from_secs(60)).await
+    });
 
     // Spawn 10 async jobs
     for i in 0..10 {
+        // Work is done immediatley, so this will wait in two batches of 1 seconds each (because of limit)
         workers.add(move |cancel_token| async move {
-            // Respect cancellation, or not, if you don't care about blocking forever
+            // optional tokio::select, if you use cancellation for your tasks, if not just do your work
             tokio::select! {
+                // Do work, in this case just sleep
                 _ = tokio::time::sleep(tokio::time::Duration::from_secs(1)) => {
                     println!("Job {i} done");
                     Ok(())
                 }
+                // If we receive cancel we close
                 _ = cancel_token.cancelled() => {
                     println!("Job {i} cancelled");
                     Ok(())
