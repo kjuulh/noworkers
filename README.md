@@ -104,6 +104,6 @@ See [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE) for details.
 
 ## Contribute
 
-Simply create an issue here or pr https://github.com/kjuulh/noworkers.git, development happens publicly at: git.front.kjuulh.io/kjuulh/noworkers.
+Simply create an issue here or pr https://github.com/kjuulh/noworkers.git, development happens publicly at: https://git.front.kjuulh.io/kjuulh/noworkers.
 
 
