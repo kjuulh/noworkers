@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2025-07-01
+
+### Added
+- clarify readme
+- set mit
+- feat use mit license
+
+
+### Docs
+- correct
+
 ## [0.0.1] - 2025-07-01
 
 ### Added
