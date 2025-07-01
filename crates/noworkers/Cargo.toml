@@ -1,0 +1,10 @@
+[package]
+name = "noworkers"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+tokio.workspace = true
+tokio-util = "0.7.15"
+tracing.workspace = true
