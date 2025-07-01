@@ -1,7 +1,12 @@
 [package]
 name = "noworkers"
-version = "0.1.0"
-edition = "2021"
+edition = "2024"
+readme = "../../README.md"
+version.workspace = true
+license = "MIT or APACHE"
+repository = "https://git.front.kjuulh.io/kjuulh/noworkers"
+authors = ["kjuulh <contact@kasperhermansen.com>"]
+description = "A small asyncronous worker pool manages thread pool limiting, cancellation and error propogation, inspired by golangs errgroup (requires tokio)"
 
 [dependencies]
 anyhow.workspace = true
