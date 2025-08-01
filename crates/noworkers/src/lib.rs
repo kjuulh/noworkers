@@ -3,6 +3,24 @@ use std::{future::Future, sync::Arc};
 use tokio::{sync::Mutex, task::JoinHandle};
 use tokio_util::sync::CancellationToken;
 
+pub mod extensions {
+    use crate::Workers;
+
+    pub trait WithSysLimitCpus {
+        fn with_limit_to_system_cpus(&mut self) -> &mut Self;
+    }
+
+    impl WithSysLimitCpus for Workers {
+        fn with_limit_to_system_cpus(&mut self) -> &mut Self {
+            self.with_limit(
+                std::thread::available_parallelism()
+                    .expect("to be able to get system cpu info")
+                    .into(),
+            )
+        }
+    }
+}
+
 type ErrChan = Arc<
     Mutex<(
         Option<tokio::sync::oneshot::Sender<anyhow::Error>>,
