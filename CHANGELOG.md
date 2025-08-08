@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2025-08-08
+
+### Other
+- Configure Renovate (#3)
+  Add renovate.json
+
 ## [0.0.1] - 2025-07-01
 
 ### Added
