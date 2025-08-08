@@ -13,3 +13,6 @@ anyhow.workspace = true
 tokio.workspace = true
 tokio-util = "0.7.15"
 tracing.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
