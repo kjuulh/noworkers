@@ -18,10 +18,10 @@ async fn main() -> anyhow::Result<()> {
         workers
             .add(move |_cancel| async move {
                 println!("Task {} starting...", i);
-                
+
                 // Simulate some async work
                 tokio::time::sleep(tokio::time::Duration::from_millis(100 * (i as u64 + 1))).await;
-                
+
                 println!("Task {} completed!", i);
                 Ok(())
             })

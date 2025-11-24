@@ -191,7 +191,10 @@
 
 use std::{future::Future, sync::Arc};
 
-use tokio::{sync::Mutex, task::JoinHandle};
+use tokio::{
+    sync::{Mutex, OwnedSemaphorePermit, Semaphore},
+    task::JoinHandle,
+};
 use tokio_util::sync::CancellationToken;
 
 /// Extension traits for common patterns.
@@ -322,8 +325,7 @@ enum WorkerLimit {
     #[default]
     NoLimit,
     Amount {
-        queue: tokio::sync::mpsc::Sender<()>,
-        done: Arc<Mutex<tokio::sync::mpsc::Receiver<()>>>,
+        done: Arc<tokio::sync::Semaphore>,
     },
 }
 
@@ -331,18 +333,21 @@ impl WorkerLimit {
     pub async fn queue_worker(&self) -> WorkerGuard {
         match self {
             WorkerLimit::NoLimit => {}
-            WorkerLimit::Amount { queue, .. } => {
+            WorkerLimit::Amount { done } => {
                 // Queue work, if the channel is limited, we will block until there is enough room
-                queue
-                    .send(())
+                let permit = done
+                    .clone()
+                    .acquire_owned()
                     .await
-                    .expect("tried to queue work on a closed worker channel");
+                    .expect("to be able to acquire permit");
+
+                return WorkerGuard {
+                    _permit: Some(permit),
+                };
             }
         }
 
-        WorkerGuard {
-            limit: self.clone(),
-        }
+        WorkerGuard { _permit: None }
     }
 }
 
@@ -353,24 +358,7 @@ impl WorkerLimit {
 ///
 /// This type is not directly constructible by users.
 pub struct WorkerGuard {
-    limit: WorkerLimit,
-}
-
-impl Drop for WorkerGuard {
-    fn drop(&mut self) {
-        match &self.limit {
-            WorkerLimit::NoLimit => { /* no limit on dequeue */ }
-            WorkerLimit::Amount { done, .. } => {
-                let done = done.clone();
-                tokio::spawn(async move {
-                    let mut done = done.lock().await;
-
-                    // dequeue an item, leave room for the next
-                    done.recv().await
-                });
-            }
-        }
-    }
+    _permit: Option<OwnedSemaphorePermit>,
 }
 
 impl Workers {
@@ -542,11 +530,8 @@ impl Workers {
     /// # }
     /// ```
     pub fn with_limit(&mut self, limit: usize) -> &mut Self {
-        let (tx, rx) = tokio::sync::mpsc::channel(limit);
-
         self.limit = WorkerLimit::Amount {
-            queue: tx,
-            done: Arc::new(Mutex::new(rx)),
+            done: Arc::new(Semaphore::new(limit)),
         };
         self
     }
